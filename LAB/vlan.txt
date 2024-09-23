@@ -1,0 +1,200 @@
+vlan 200
+name CCNA200
+ex
+vlan 220
+name CCNA220
+ex
+vlan 230
+name CCNA230
+ex
+
+int range fa0/5-10
+sw mode ac	
+sw ac vlan 200
+ex
+int range fa0/11-15
+sw mode ac	
+sw ac vlan 220
+ex
+int range fa0/16-24
+sw mode ac	
+sw ac vlan 230
+ex
+
+int range fa0/1-4
+sw mode trunk
+ex
+
+
+ip dhcp pool VLAN200
+net 10.16.10.0 255.255.255.0
+de 10.16.10.1
+dns 10.0.0.100
+ex
+
+ip dhcp pool VLAN220
+net 10.16.11.0 255.255.255.128
+de 10.16.11.1
+dns 10.0.0.100
+ex
+
+ip dhcp pool VLAN230
+net 10.16.11.128 255.255.255.128
+de 10.16.11.129
+dns 10.0.0.100
+ex
+
+int gig0/0/1.200
+des GW to VLAN200
+enc dot1q 200
+ip add 10.16.10.1 255.255.255.0
+ex
+
+int gig0/0/1.220
+des GW to VLAN220
+enc dot1q 220
+ip add 10.16.11.1 255.255.255.128
+ex
+
+int gig0/0/1.230
+des GW to VLAN230
+enc dot1q 230
+ip add 10.16.11.129 255.255.255.128
+ex
+
+
+
+
+host SW21
+ena pas cisco
+line con 0
+pass class
+login
+exit
+line vty 0 15
+pas class
+login exit
+
+vlan 200
+name CCNA200
+exit
+vlan 220
+name CCNA220
+exit
+vlan 230
+name CCNA230
+exit
+
+inter face range f0/5-10
+sw mo ac
+sw ac vlan 200
+exit
+inter face range f0/11-15
+sw mo ac
+sw ac vlan 220
+exit
+inter face range f0/16-24
+sw mo ac
+sw ac vlan 230
+exit
+
+Thai bu dai
+#Switch
+ena
+conf t
+
+hostname SW23
+enable password cisco
+line console 0
+ password class
+ login
+ exit
+line vty 0 15
+ password class
+ login
+ exit
+
+vlan 100
+ name CCNA100
+ exit
+vlan 120
+ name CCNA120
+ exit
+vlan 130
+ name CCNA130
+ exit
+
+interface range f0/5-10
+ switchport mode access
+ switchport access vlan 100
+ exit
+interface range f0/11-15
+ switchport mode access
+ switchport access vlan 120
+ exit
+interface range f0/16-24
+ switchport mode access
+ switchport access vlan 130
+ exit
+
+
+
+int range fa0/1 - 4
+switchport mode trunk
+ex
+
+
+#route
+ena 
+conf t
+
+ip dhcp pool VLAN100
+network 10.16.2.0 255.255.255.192
+default-router 10.16.2.1
+dns-server 10.0.0.100
+ex
+ip dhcp pool VLAN120
+network 10.16.2.0 255.255.255.192
+default-router 10.16.2.1
+dns-server 10.0.0.100
+ex
+ip dhcp pool VLAN130
+network 10.16.2.0 255.255.255.192
+default-router 10.16.2.1
+dns-server 10.0.0.100
+ex
+
+
+int gig0/0/1
+no sh
+int gig0/0/1.100
+description GW to VLAN 100
+encapsulation dot1q 100
+ip address 10.16.2.1 255.255.255.192
+ex
+int gig0/0/1.120
+description GW to VLAN 120
+encapsulation dot1q 120
+ip address 10.16.2.1 255.255.255.192
+ex
+int gig0/0/1.130
+description GW to VLAN 130
+encapsulation dot1q 130
+ip address 10.16.2.1 255.255.255.192
+ex
+
+
+ena
+conf t
+int se0/1/0
+ip add 10.16.6.1 255.255.255.0
+no sh
+ex
+int se0/1/0
+ip add 10.16.6.1 255.255.255.0
+no sh
+ex
+
+ip route 209.165.1.0 255.255.255.252 10.16.1.2
+ip route 10.0.0.0 255.0.0.0 10.16.1.2 209.165.1.0
+

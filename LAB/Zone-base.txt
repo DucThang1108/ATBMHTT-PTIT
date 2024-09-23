@@ -1,0 +1,49 @@
+1. Tạo các vùng mạng(zone):
+zone security <name-zone>
+
+2. Gán các giao diện vào các zone tương ứng:
+interface <interface>
+zone-member security <name-zone>
+
+3. Tạo các zone-pairs:
+zone-pair security <Name-zone-pair> source <name-zone-source> destination <name-zone-destination>
+
+4. Cấu hình Map Configuration:
+	Chính sách truy cập Interzone là phần chính của tường lửa dựa trên khu vực để phân loại lưu lượng và áp dụng các chính sách tường lửa. class-map và Policy-Map  được thực hiện trong nhiệm vụ này:
++) class-map: Điều này sẽ phân loại lưu lượng truy cập
++) Policy-Map : Điều này sẽ quyết định 'số phận' của giao thông
+
+	1) Cấu hình class-map:
+	#ip access-list extended <name-extended>
+	#permit <protocol> <ip-address> <subnet-mask> any <Select-ACL> <port>
+	+ với Select ACL có: 
+		eq: Được sử dụng để lọc chỉ các gói tin trên một cổng cụ thể.
+		established: Thường được sử dụng để lọc các gói tin đã thiết lập kết nối hoặc đang trong quá trình gửi dữ liệu trong kết nối.
+		gt: Được sử dụng để lọc chỉ các gói tin có cổng số lớn hơn giá trị cụ thể đã chỉ định. 
+		lt: được sử dụng để lọc chỉ các gói tin có cổng số nhỏ hơn giá trị cụ thể đã chỉ định.
+		neq: Được sử dụng để lọc chỉ các gói tin không trên cổng đã chỉ định, cho phép loại bỏ các gói tin với cổng nguồn hoặc đích cụ thể.
+	#class-map <type-classmap> inspect match-all <name-class>
+	#match access-group name <name-class>
+hoặc:
+	#match protocol <name-protocol>
+
+	2) cấu hình Policy-Map 
+	+) Tạo Policy-map:
+	#policy-map type inspect <name-policy-map>
+	+) Xác định lớp cho việc kiểm tra:
+	#class type inspect <name-class>
+
+5. Áp dụng các policy maps vào các zone pairs:
+
+# zone-pair security <name-zone-pair> source <name-source-zone> destination <name-destination-zone>
+# service-policy type inspect <name-policy-map>
+
+
+- Để kiểm tra cấu hình:
+
+#show class-map type inspect
+
+#show policy-map type inspect
+
+#show zone-pair security
+	
